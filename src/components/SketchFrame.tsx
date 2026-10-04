@@ -1,11 +1,12 @@
-import { boilFrames, scribble, twist, wobblyLine } from "@/lib/sketch";
+import { boilFrames, scribble, wobblyLine } from "@/lib/sketch";
+import FrameOrbit from "./FrameOrbit";
 
 /*
  * An "unfinished sketch" frame around a panel: blue pencil construction lines
  * that overshoot the corners, and a boiling double ink outline. On hover the
  * frame goes haywire: tangled ink and accent-colored energy squiggles whip
- * along every edge and knot up in the corners, swirling like the Spot's
- * spirals. Drawn in a 0–100 box stretched over the host; strokes don't scale.
+ * clockwise around the frame (FrameOrbit.tsx) and the corner knots spin.
+ * Drawn in a 0–100 box stretched over the host; strokes don't scale.
  */
 
 // Tangled knots at the corners and edge midpoints (0–100 frame units).
@@ -19,15 +20,8 @@ const KNOTS: [number, number][] = [
 ];
 const KNOT_BOX = 9;
 
-// Each knot spins in full circles on its own clock: [duration, direction].
-const KNOT_SPIN = [
-  ["2.4s", 1],
-  ["3s", -1],
-  ["2.7s", 1],
-  ["3.3s", -1],
-  ["2.2s", -1],
-  ["2.9s", 1],
-] as const;
+// Each knot spins clockwise, with the lines, on its own clock.
+const KNOT_SPIN = ["2.4s", "3s", "2.7s", "3.3s", "2.2s", "2.9s"];
 
 const FRAMES = boilFrames(4, 99, (layout, jitter) => {
   const edges = (inset: number, amp: number, over: number) =>
@@ -45,31 +39,6 @@ const FRAMES = boilFrames(4, 99, (layout, jitter) => {
   };
 });
 
-// The edge lines swirl: every point circles its own small orbit, out of step
-// with its neighbors, so the lines corkscrew in place. Eight frames make one
-// full turn (0.667s at the boil's 12fps).
-const SPIRAL_FRAMES = boilFrames(8, 77, (layout, _jitter, frame) => {
-  const phase = (frame / 8) * Math.PI * 2;
-  // Energy lines along each edge, wandering in and out of the border. The box
-  // stretches far more horizontally than vertically, so side lines use a
-  // tighter offset/amplitude to stay off the text.
-  const chaos = (offset: number, amp: number) => {
-    const so = offset * 0.35;
-    const sa = amp * 0.35;
-    return [
-      twist([-2, offset], [102, offset], layout, phase, amp * 0.45, amp, 14),
-      twist([100 - so, -2], [100 - so, 102], layout, phase, sa, sa * 2.2, 10),
-      twist([102, 100 - offset], [-2, 100 - offset], layout, phase, amp * 0.45, amp, 14),
-      twist([so, 102], [so, -2], layout, phase, sa, sa * 2.2, 10),
-    ].join("");
-  };
-
-  return {
-    ink: chaos(2, 2.2) + chaos(4.5, 2.8),
-    color: chaos(1, 2.6) + chaos(5.5, 2),
-  };
-});
-
 export default function SketchFrame() {
   return (
     <div aria-hidden className="sketch-frame">
@@ -82,15 +51,8 @@ export default function SketchFrame() {
         ))}
       </svg>
 
-      {/* Hover-only squiggles. */}
-      <svg className="spiral-boil absolute inset-0 h-full w-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
-        {SPIRAL_FRAMES.map((fr, i) => (
-          <g key={i} style={{ "--boil-i": i } as React.CSSProperties}>
-            <path className="sketch-chaos sketch-chaos-color ink-bleed" d={fr.color} />
-            <path className="sketch-chaos" d={fr.ink} />
-          </g>
-        ))}
-      </svg>
+      {/* Hover-only squiggles: they travel clockwise around the frame. */}
+      <FrameOrbit />
       {KNOTS.map(([x, y], k) => (
         <svg
           key={k}
@@ -103,8 +65,7 @@ export default function SketchFrame() {
               top: `${y - KNOT_BOX}%`,
               width: `${KNOT_BOX * 2}%`,
               height: `${KNOT_BOX * 2}%`,
-              "--spin-dur": KNOT_SPIN[k][0],
-              "--spin-dir": KNOT_SPIN[k][1],
+              "--spin-dur": KNOT_SPIN[k],
             } as React.CSSProperties
           }
         >
