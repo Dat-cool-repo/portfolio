@@ -1622,3 +1622,69 @@ html.impact-active .boil > * {
     transition: none;
   }
 }
+
+/* ---- Touch lite mode ----
+   Phones (iOS Safari above all) kill the tab when the page asks for more
+   compositor memory and per-frame work than they have. On touch devices every
+   drawing stays, but the expensive motion stops: line boil holds its first
+   frame, turbulence filters and full-screen blend layers are dropped, and
+   particle counts are cut. Desktop is untouched. */
+@media (hover: none), (pointer: coarse) {
+  /* Line boil: hold the first frame; the other three never paint. */
+  .boil > * {
+    animation: none;
+  }
+  .boil > *:not(:first-child) {
+    display: none;
+  }
+
+  /* Turbulence + displacement re-rasterizes on every animated step. */
+  .spot-blob,
+  .ink-blob,
+  .ink-rough {
+    filter: none;
+  }
+  .ink-bleed {
+    filter: none;
+    mix-blend-mode: normal;
+  }
+
+  /* Spot void and card portals: a still frame, half the scribble clusters. */
+  .spot-spin,
+  .spot-drift,
+  .spot-blob {
+    animation: none;
+  }
+  .spot-stage > .spot-spin,
+  .spot-stage > .spot-drift,
+  .spot-layer {
+    will-change: auto;
+  }
+  .spot-scribble-extra {
+    display: none;
+  }
+
+  /* Ink fling: a handful of blobs instead of 70. */
+  .ink-blob:nth-of-type(n + 13) {
+    display: none;
+  }
+
+  /* Full-screen layers: noise grain, held modes and impact frames (impacts
+     don't fire on touch, see ImpactFlash.tsx), plus the pulsing zone lines. */
+  .scene-static,
+  .hold-impact,
+  .hold-box,
+  .hold-punk,
+  .impact-screen,
+  .fx-toggle {
+    display: none;
+  }
+  .impact-zone-lines {
+    animation: none;
+  }
+
+  /* Every panel floating at once keeps dozens of page-sized layers alive. */
+  .drift {
+    animation: none;
+  }
+}

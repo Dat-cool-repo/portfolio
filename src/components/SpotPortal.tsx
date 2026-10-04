@@ -121,7 +121,7 @@ export default function SpotPortal({ accent }: { accent: string }) {
       <div aria-hidden className="boil absolute inset-0">
         {FRAMES.map((fr, i) => (
           <svg key={i} className="spot-layer absolute inset-0 h-full w-full" {...VIEW} style={{ "--boil-i": i } as React.CSSProperties}>
-            <g filter="url(#ink-rough)">
+            <g className="ink-rough" filter="url(#ink-rough)">
               <path d={fr.hole} fill="#050506" />
               <path d={fr.satellites} fill="#050506" />
             </g>

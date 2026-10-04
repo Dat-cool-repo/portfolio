@@ -73,49 +73,16 @@ export default function SectionThemes() {
     // purple impact negative, About turns the page into a punk photocopy.
     // One loop reads the real :hover state every frame (so scrolling under a
     // still mouse can't desync it), sets <html data-hold>, and cuts the
-    // overlay's hole around the hovered panel as it drifts.
-    // Mouse: the hovered box. Touch (no real hover): a tap holds a box and
-    // fires its impact; tapping it again, tapping elsewhere or scrolling
-    // away releases it. The held box gets .is-held, which all the CSS keys off.
+    // overlay's hole around the hovered panel as it drifts. Mouse only:
+    // touch devices have no real hover, and the full-screen overlays are too
+    // heavy for phones, so the loop doesn't run there at all.
     const canHover = window.matchMedia("(hover: hover) and (pointer: fine)");
-    const BOXES = ".exp-box, .punk-box";
-    let touchHeld: HTMLElement | null = null;
-    let touchY = 0;
-    const onTap = (e: PointerEvent) => {
-      if (e.pointerType === "mouse") return;
-      const box = (e.target as Element).closest<HTMLElement>(BOXES);
-      if (!box || box === touchHeld) {
-        touchHeld = null;
-        return;
-      }
-      touchHeld = box;
-      touchY = window.scrollY;
-      if (box.dataset.impact) {
-        window.dispatchEvent(
-          new CustomEvent(IMPACT_EVENT, {
-            detail: {
-              color: box.dataset.impact,
-              word: box.dataset.impactWord || "POW!",
-            },
-          }),
-        );
-      }
-    };
-    const onTouchScroll = () => {
-      if (touchHeld && Math.abs(window.scrollY - touchY) > 160)
-        touchHeld = null;
-    };
-    document.addEventListener("pointerup", onTap);
-    window.addEventListener("scroll", onTouchScroll, { passive: true });
-
     let held: HTMLElement | null = null;
     let lastRect = "";
     let raf = 0;
     const loop = () => {
       raf = requestAnimationFrame(loop);
-      const box = canHover.matches
-        ? document.querySelector<HTMLElement>(".exp-box:hover, .punk-box:hover")
-        : touchHeld;
+      const box = document.querySelector<HTMLElement>(".exp-box:hover, .punk-box:hover");
       if (box !== held) {
         held?.classList.remove("is-held");
         box?.classList.add("is-held");
@@ -144,12 +111,25 @@ export default function SectionThemes() {
       html.style.setProperty("--hx2", `${x2}px`);
       html.style.setProperty("--hy2", `${y2}px`);
     };
-    loop();
+    const stop = () => {
+      cancelAnimationFrame(raf);
+      raf = 0;
+      held?.classList.remove("is-held");
+      held = null;
+      lastRect = "";
+      delete html.dataset.hold;
+    };
+    // Follow the pointer type, e.g. a mouse plugged into a tablet.
+    const syncLoop = () => {
+      if (!canHover.matches) stop();
+      else if (!raf) loop();
+    };
+    syncLoop();
+    canHover.addEventListener("change", syncLoop);
 
     return () => {
-      cancelAnimationFrame(raf);
-      document.removeEventListener("pointerup", onTap);
-      window.removeEventListener("scroll", onTouchScroll);
+      stop();
+      canHover.removeEventListener("change", syncLoop);
       io.disconnect();
       window.removeEventListener("scroll", onScroll);
       clearTimeout(settle);

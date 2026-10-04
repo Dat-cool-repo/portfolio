@@ -196,7 +196,7 @@ export default function SpotVoid() {
                 viewBox={`${x - m} ${y - m} ${m * 2} ${m * 2}`}
                 style={{ "--boil-i": i } as React.CSSProperties}
               >
-                <path d={fr.portals[k].fill} fill="#000" filter="url(#ink-rough)" />
+                <path className="ink-rough" d={fr.portals[k].fill} fill="#000" filter="url(#ink-rough)" />
               </svg>
             ))}
           </div>
@@ -222,7 +222,7 @@ export default function SpotVoid() {
         return (
           <svg
             key={k}
-            className="spot-drift boil absolute overflow-visible"
+            className={`spot-drift boil absolute overflow-visible${k % 2 ? " spot-scribble-extra" : ""}`}
             viewBox={`${x - mx} ${y - my} ${mx * 2} ${my * 2}`}
             style={
               {

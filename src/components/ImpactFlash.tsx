@@ -128,9 +128,11 @@ export default function ImpactFlash() {
     let clearTimer: ReturnType<typeof setTimeout>;
     let duotoneTimer: ReturnType<typeof setTimeout>;
 
-    // Shared trigger for hover impacts and section-change impacts.
+    // Shared trigger for hover impacts and section-change impacts. Touch
+    // devices skip them: the full-screen blend layers are what phones can't
+    // afford (see the touch lite mode in globals.css).
     const fire = (cx: number, cy: number, spread: number, color: string, word: string) => {
-      if (reduce.matches || !readFx()) return;
+      if (reduce.matches || !canHover.matches || !readFx()) return;
       const now = performance.now();
       if (now - last < COOLDOWN_MS) return;
       last = now;
@@ -200,7 +202,7 @@ export default function ImpactFlash() {
         onClick={() => setFx(!fxOn)}
         aria-pressed={fxOn}
         data-cursor-hover
-        className="fixed bottom-4 right-4 z-40 block border-[3px] border-black bg-paper px-3 py-1 font-mono text-xs font-bold uppercase text-paper-ink shadow-[4px_4px_0_0_var(--accent-2)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 sm:bottom-20 sm:right-6"
+        className="fx-toggle fixed bottom-4 right-4 z-40 block border-[3px] border-black bg-paper px-3 py-1 font-mono text-xs font-bold uppercase text-paper-ink shadow-[4px_4px_0_0_var(--accent-2)] transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 sm:bottom-20 sm:right-6"
         title="Toggle full-screen impact effects"
       >
         FX: {fxOn ? "On" : "Off"}
