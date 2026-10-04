@@ -43,6 +43,8 @@ export default function ProjectCard({
 
   return (
     <div
+      data-impact={accent}
+      data-impact-word={word}
       className={`impact ${flip ? "md:rotate-[0.7deg]" : "md:-rotate-[0.7deg]"}`}
       style={{ "--burst": accent } as React.CSSProperties}
     >

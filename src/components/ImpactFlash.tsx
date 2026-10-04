@@ -110,9 +110,9 @@ function restartClass(el: Element, name: string) {
 }
 
 /**
- * Full-screen Spider-Verse style impact frames, played when crossing into a
- * new section: a magenta duotone frame, a jump-cut to acid green, then
- * colored speed lines rushing out while the page shakes.
+ * Full-screen Spider-Verse style impact frames. Hovering an element marked
+ * [data-impact] plays: a magenta duotone frame, a jump-cut to acid green, then
+ * colored speed lines rushing out from the element while the page shakes.
  */
 export default function ImpactFlash() {
   const [impact, setImpact] = useState<Impact | null>(null);
@@ -128,7 +128,7 @@ export default function ImpactFlash() {
     let clearTimer: ReturnType<typeof setTimeout>;
     let duotoneTimer: ReturnType<typeof setTimeout>;
 
-    // Trigger for section-change impacts. Touch
+    // Shared trigger for hover impacts and section-change impacts. Touch
     // devices skip them: the full-screen blend layers are what phones can't
     // afford (see the touch lite mode in globals.css).
     const fire = (cx: number, cy: number, spread: number, color: string, word: string) => {
@@ -162,16 +162,33 @@ export default function ImpactFlash() {
       }, DURATION_MS);
     };
 
-    // Fired when crossing into a new section (SectionThemes.tsx). Hovering a
-    // card only plays its own local punch (see .impact in globals.css), so
-    // reading down the page never takes over the whole screen.
+    const onOver = (e: PointerEvent) => {
+      if (!canHover.matches || e.pointerType !== "mouse") return;
+      const target = (e.target as Element).closest<HTMLElement>("[data-impact]");
+      if (!target) return;
+      // Only fire on entry, not when moving between children of the same target.
+      const from = (e.relatedTarget as Element | null)?.closest("[data-impact]");
+      if (from === target) return;
+      const rect = target.getBoundingClientRect();
+      fire(
+        rect.left + rect.width / 2,
+        rect.top + rect.height / 2,
+        Math.max(rect.width, rect.height) * 0.6,
+        target.dataset.impact || "var(--accent-1)",
+        target.dataset.impactWord || "POW!",
+      );
+    };
+
+    // Programmatic impacts, e.g. crossing into a new section (SectionThemes.tsx).
     const onImpact = (e: Event) => {
       const { color, word } = (e as CustomEvent<{ color: string; word: string }>).detail;
       fire(window.innerWidth / 2, window.innerHeight / 2, Math.min(window.innerWidth, 900) * 0.35, color, word);
     };
     window.addEventListener(IMPACT_EVENT, onImpact);
 
+    document.addEventListener("pointerover", onOver);
     return () => {
+      document.removeEventListener("pointerover", onOver);
       window.removeEventListener(IMPACT_EVENT, onImpact);
       clearTimeout(clearTimer);
       clearTimeout(duotoneTimer);

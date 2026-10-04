@@ -7,6 +7,8 @@ const PORTRAIT_SRC: string | null = "/portrait-headshot.jpg";
 export default function ComicPortrait() {
   return (
     <div
+      data-impact="var(--accent-2)"
+      data-impact-word="HEY!"
       className="impact pop-in relative mx-auto w-full max-w-[300px]"
       style={{ "--delay": "0.3s", "--burst": "var(--accent-2)" } as React.CSSProperties}
     >
