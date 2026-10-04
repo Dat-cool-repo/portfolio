@@ -1458,6 +1458,12 @@ html[data-hold] .drift {
 .impact:hover .sketch-chaos {
   opacity: 1;
 }
+/* Hover squiggles drift and tumble like the Spot backdrop's scribbles. */
+@media (prefers-reduced-motion: no-preference) {
+  .impact:hover .frame-drift {
+    animation: spot-drift var(--drift-d, 3s) steps(36, end) var(--drift-delay, 0s) infinite;
+  }
+}
 .portal-storm {
   display: none;
 }

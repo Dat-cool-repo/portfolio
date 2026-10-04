@@ -113,38 +113,7 @@ export function hatch(c: P, size: number, angle: number, count: number, jitter: 
   return d;
 }
 
-/**
- * A coiled squiggle (a stretched spring of ink loops) running from a to b.
- * `rx`/`ry` are the loop radii along each axis, so loops stay round inside a
- * non-uniformly stretched viewBox. Advancing `phase` by a quarter turn per
- * boil frame makes the loops roll along the line.
- */
-export function coil(a: P, b: P, jitter: Rand, loops: number, rx: number, ry: number, phase = 0, wobble = 0.15): string {
-  const dx = b[0] - a[0];
-  const dy = b[1] - a[1];
-  const len = Math.hypot(dx, dy) || 1;
-  const [ux, uy] = [dx / len, dy / len];
-  const [nx, ny] = [-uy, ux];
-  const rAlong = Math.abs(ux) * rx + Math.abs(uy) * ry;
-  const rNormal = Math.abs(nx) * rx + Math.abs(ny) * ry;
-  const n = Math.round(loops * 8);
-  const pts: P[] = [];
-  for (let i = 0; i <= n; i++) {
-    const t = i / n;
-    const th = t * loops * Math.PI * 2 + phase;
-    const k = 0.6 + jitter() * 0.8; // uneven loops, like a hand-drawn spring
-    const al = Math.cos(th) * rAlong * k + (jitter() - 0.5) * wobble * rAlong;
-    const no = Math.sin(th) * rNormal * k + (jitter() - 0.5) * wobble * rNormal;
-    pts.push([a[0] + dx * t + ux * al + nx * no, a[1] + dy * t + uy * al + ny * no]);
-  }
-  return smooth(pts);
-}
-
 /** Build `frames` boil frames of a drawing: same layout, fresh jitter each. */
-export function boilFrames<T>(
-  frames: number,
-  layoutSeed: number,
-  draw: (layout: Rand, jitter: Rand, frame: number) => T,
-): T[] {
-  return Array.from({ length: frames }, (_, i) => draw(mulberry32(layoutSeed), mulberry32(layoutSeed * 31 + i * 7919), i));
+export function boilFrames<T>(frames: number, layoutSeed: number, draw: (layout: Rand, jitter: Rand) => T): T[] {
+  return Array.from({ length: frames }, (_, i) => draw(mulberry32(layoutSeed), mulberry32(layoutSeed * 31 + i * 7919)));
 }
