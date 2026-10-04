@@ -28,7 +28,7 @@ export default function Hero() {
       <div className="relative mx-auto grid w-full max-w-6xl items-center gap-16 lg:grid-cols-[minmax(0,1fr)_300px]">
         <div>
           <p {...enter(0)} className="pop-in caption -rotate-1">
-            UF Computer Engineering &apos;27 · Open to ML &amp; AI roles
+            UF Computer Science &apos;27 · Open to ML &amp; AI roles
           </p>
 
           <h1

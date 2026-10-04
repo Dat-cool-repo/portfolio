@@ -61,9 +61,9 @@ export default function ComicPortrait() {
         aria-hidden
         className="absolute -right-6 -top-10 z-10 rotate-6 border-[3px] border-black bg-paper px-3 py-2 text-center text-paper-ink shadow-[5px_5px_0_0_var(--accent-1)]"
       >
-        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em]">Vol. 01</p>
-        <p className="font-display text-4xl leading-none">#26</p>
-        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em]">New grad</p>
+        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em]">Class of</p>
+        <p className="font-display text-4xl leading-none">&apos;27</p>
+        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em]">UF CS</p>
       </div>
 
       {/* Starburst sticker */}
