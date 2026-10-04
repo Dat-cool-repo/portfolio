@@ -265,12 +265,7 @@ body {
 
   /* Comic-treated portrait: high-contrast mono photo under a cyan→magenta ink. */
   .portrait-photo {
-    filter: grayscale(1) contrast(1.35) brightness(1.08);
-  }
-  .portrait-tint {
-    background: linear-gradient(160deg, var(--accent-2) 0%, var(--accent-1) 100%);
-    mix-blend-mode: multiply;
-    opacity: 0.85;
+    filter: saturate(1.08) contrast(1.04);
   }
 
   /* Starburst sticker. */

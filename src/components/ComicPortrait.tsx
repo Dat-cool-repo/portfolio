@@ -2,7 +2,7 @@ import Image from "next/image";
 
 // Drop a photo in /public (e.g. /public/portrait.jpg) and set its path here.
 // A clear, front-facing headshot works best — the comic treatment is applied in CSS.
-const PORTRAIT_SRC: string | null = null;
+const PORTRAIT_SRC: string | null = "/portrait-headshot.jpg";
 
 export default function ComicPortrait() {
   return (
@@ -39,12 +39,11 @@ export default function ComicPortrait() {
           ) : (
             <PlaceholderSilhouette />
           )}
-          {/* Duotone ink + halftone screen over the photo. */}
-          <div aria-hidden className="portrait-tint pointer-events-none absolute inset-0" />
+          {/* Light halftone screen; the photo itself stays in full color. */}
           <div
             aria-hidden
             className="halftone pointer-events-none absolute inset-0 mix-blend-multiply"
-            style={{ "--dot-color": "rgb(0 0 0 / 0.45)", "--dot": "5px" } as React.CSSProperties}
+            style={{ "--dot-color": "rgb(0 0 0 / 0.12)", "--dot": "5px" } as React.CSSProperties}
           />
           {!PORTRAIT_SRC && (
             <span className="absolute left-1/2 top-4 -translate-x-1/2 whitespace-nowrap border-2 border-black bg-accent-3 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-paper-ink">
