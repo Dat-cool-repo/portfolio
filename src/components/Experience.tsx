@@ -3,7 +3,6 @@ import ComicPage from "./ComicPage";
 import { EXPERIENCE } from "@/data/experience";
 
 const STAT_COLORS = ["bg-accent-3", "bg-accent-2", "bg-accent-4"];
-const IMPACT_WORDS = ["WHAM!", "BAM!", "KAPOW!", "BOOM!", "ZAP!"];
 
 export default function Experience() {
   return (
@@ -21,8 +20,6 @@ export default function Experience() {
             <Reveal delay={i * 0.06}>
               <div
                 className="exp-box drift relative"
-                data-impact="#b4ff2e"
-                data-impact-word={IMPACT_WORDS[i % IMPACT_WORDS.length]}
                 style={
                   {
                     "--drift-dur": `${5.5 + (i % 3) * 1.3}s`,
