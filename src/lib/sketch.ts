@@ -113,7 +113,32 @@ export function hatch(c: P, size: number, angle: number, count: number, jitter: 
   return d;
 }
 
+/**
+ * A tangled line from a toward b whose points each circle a small orbit, a
+ * little out of step with their neighbors. Drawn at successive `phase`s it
+ * twists like a corkscrew instead of shifting. Uses `layout` for the shape,
+ * so it must be drawn with the same layout sequence every frame.
+ */
+export function twist(a: P, b: P, layout: Rand, phase: number, rx: number, ry: number, points = 9): string {
+  const pts: P[] = [];
+  const start = layout() * Math.PI * 2;
+  const step = 0.9 + layout() * 0.6;
+  const spin = layout() < 0.5 ? 1 : -1;
+  for (let i = 0; i <= points; i++) {
+    const t = i / points;
+    const bx = (layout() - 0.5) * rx;
+    const by = (layout() - 0.5) * ry;
+    const th = spin * phase + start + i * step;
+    pts.push([a[0] + (b[0] - a[0]) * t + bx + Math.cos(th) * rx, a[1] + (b[1] - a[1]) * t + by + Math.sin(th) * ry]);
+  }
+  return smooth(pts);
+}
+
 /** Build `frames` boil frames of a drawing: same layout, fresh jitter each. */
-export function boilFrames<T>(frames: number, layoutSeed: number, draw: (layout: Rand, jitter: Rand) => T): T[] {
-  return Array.from({ length: frames }, (_, i) => draw(mulberry32(layoutSeed), mulberry32(layoutSeed * 31 + i * 7919)));
+export function boilFrames<T>(
+  frames: number,
+  layoutSeed: number,
+  draw: (layout: Rand, jitter: Rand, frame: number) => T,
+): T[] {
+  return Array.from({ length: frames }, (_, i) => draw(mulberry32(layoutSeed), mulberry32(layoutSeed * 31 + i * 7919), i));
 }

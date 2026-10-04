@@ -1458,10 +1458,25 @@ html[data-hold] .drift {
 .impact:hover .sketch-chaos {
   opacity: 1;
 }
-/* Hover squiggles drift and tumble like the Spot backdrop's scribbles. */
+/* Hover squiggles swirl (SketchFrame.tsx): knots spin like the portal storm,
+   and the edge lines step through an eight-frame orbit at the boil's 12fps,
+   one full turn every 0.667s. */
+.spiral-boil > * {
+  visibility: hidden;
+}
+.spiral-boil > *:first-child {
+  visibility: visible;
+}
+@keyframes spiral-boil {
+  0%, 12.49% { visibility: visible; }
+  12.5%, 100% { visibility: hidden; }
+}
 @media (prefers-reduced-motion: no-preference) {
-  .impact:hover .frame-drift {
-    animation: spot-drift var(--drift-d, 3s) steps(36, end) var(--drift-delay, 0s) infinite;
+  .impact:hover .spiral-boil > * {
+    animation: spiral-boil 0.667s steps(1, end) calc(var(--boil-i, 0) * -0.0833s) infinite;
+  }
+  .impact:hover .frame-spin {
+    animation: spot-spin var(--spin-dur, 3s) steps(36, end) infinite;
   }
 }
 .portal-storm {
