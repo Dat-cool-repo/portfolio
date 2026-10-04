@@ -51,7 +51,10 @@ export default function ProjectCard({
 
       <article
         data-cursor-hover
-        className="spot-card impact-card group grid overflow-hidden md:grid-cols-[2fr_3fr]"
+        className={`spot-card impact-card group grid overflow-hidden ${
+          // The story cell always gets the wider column, whichever side it is on.
+          flip ? "md:grid-cols-[3fr_2fr]" : "md:grid-cols-[2fr_3fr]"
+        }`}
         style={{ "--shadow": accent } as React.CSSProperties}
       >
         {/* Splash cell: a portal hole, or the project screenshot. */}
