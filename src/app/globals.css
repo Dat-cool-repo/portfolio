@@ -323,9 +323,8 @@ body {
   }
 }
 
-/* Punch, shake and RGB split only — no invert here. The full-screen impact
-   frame (ImpactFlash.tsx) already flips the page to a negative; inverting
-   the card too on a different clock made them cancel out and flicker. */
+/* Punch, shake and RGB split only. Hover stays local to the card; the
+   full-screen impact frame (ImpactFlash.tsx) is saved for section changes. */
 @keyframes impact-flash {
   0% { translate: 0 0; }
   8% { scale: 1.15; translate: -7px 4px; }
@@ -350,7 +349,9 @@ body {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .impact:hover .impact-card {
+  /* The sketch outline punches and shakes with the card, not just the contents. */
+  .impact:hover .impact-card,
+  .impact:hover .sketch-frame {
     animation: impact-flash 0.45s linear;
   }
   .impact:hover::after {
