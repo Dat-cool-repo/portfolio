@@ -1458,6 +1458,23 @@ html[data-hold] .drift {
 .impact:hover .sketch-chaos {
   opacity: 1;
 }
+/* Energy racing around the frame: broken strokes that travel along each
+   edge on hover (on twos, like the rest of the ink), on top of the boil. */
+.sketch-chaos {
+  stroke-dasharray: 70 16 24 16;
+}
+@keyframes sketch-race {
+  to { stroke-dashoffset: -126; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .impact:hover .sketch-chaos {
+    animation: sketch-race 0.5s steps(6, end) infinite;
+  }
+  .impact:hover .sketch-chaos-color {
+    animation-direction: reverse;
+    animation-duration: 0.667s;
+  }
+}
 .portal-storm {
   display: none;
 }
