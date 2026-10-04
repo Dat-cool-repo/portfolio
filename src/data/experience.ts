@@ -29,6 +29,7 @@ export const EXPERIENCE: Experience[] = [
     highlights: [
       "Built an end-to-end pipeline over 50M+ rows — Snowflake ingest through model scoring to marketing-side export — and deployed 2 production models via Snowflake Model Registry on scheduled, YAML-configured runs.",
       "Implemented dynamic batched loading in SQL and Python for scheduled inference on 50M-row tables, and co-designed the deployment template and data contract that standardized the team's ML release process.",
+      "Configured a Snowflake Cortex Agent that turns stakeholders' natural-language questions into optimized SQL, so they can generate their own graphs and tables.",
       "Built an Isolation Forest classifier on a 1:99 imbalanced dataset (0.85 AUC-ROC, 0.20 PR-AUC), plus a GAN synthetic-data pipeline that improved F1 on classification benchmarks.",
       "Hosted workshops on Gaussian Mixture Models, Transformers, GANs and Mixture of Experts for the Data Science department.",
     ],
@@ -80,10 +81,11 @@ export const EXPERIENCE: Experience[] = [
     tags: ["PyTorch", "CUDA", "OpenCV", "YOLO", "SAM2", "LSTM", "Computer vision"],
     publication: {
       title: "AI-Driven Plant Tracking and Segmentation for Precise Canopy Estimation in Strawberry Field",
-      authors: "Z. Huang, W. S. Lee, Đ. Minh",
+      authors: "Z. Huang, W. S. Lee, M. Đ. Lê",
       venue: "ASABE Annual International Meeting 2025",
       summary:
-        "A workflow combining YOLOv11 detection, an enhanced ByteTrack tracker (moving averages + motion constraints) and Segment Anything with improved prompt selection, reaching 0.924 IoU on strawberry canopy segmentation.",
+        "Field-scale strawberry canopy estimation from video: YOLOv11 detects plants, flowers and fruit; an enhanced ByteTrack tracker (moving averages + motion constraints) holds each plant's identity across frames; and Segment Anything, prompted by YOLO boxes and auto-selected exclusion points, segments each canopy. Reached 0.924 IoU without camera calibration, beating non-learning baselines.",
+      href: "https://doi.org/10.13031/aim.202500347",
     },
   },
   {

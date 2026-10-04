@@ -18,7 +18,8 @@ export const RESEARCH: ResearchItem[] = [
     title: "AI-driven plant tracking for canopy estimation",
     venue: "UF/IFAS Precision Agriculture Lab · ASABE 2025",
     summary:
-      "Manual canopy measurement doesn't scale to whole strawberry fields. We combined YOLOv11 detection, an enhanced ByteTrack tracker (moving averages + motion constraints) and Segment Anything with better prompt selection to track and segment every plant through its growth cycle — 0.924 IoU, published at the 2025 ASABE Annual International Meeting.",
+      "Canopy size drives strawberry yield prediction, but measuring it by hand doesn't scale to whole fields. Our workflow runs in three stages over field video, with no camera calibration and no fine-tuning of SAM. First, YOLOv11 detects every plant, plus its flowers and fruit, in each frame. Second, an enhanced ByteTrack tracker keeps each plant's identity across frames. ByteTrack matches both high- and low-confidence detections against Kalman-predicted tracks, and we added moving averages and motion constraints so identities stay stable from frame to frame. Third, Segment Anything (SAM) segments each canopy, prompted with the plant's YOLO box plus automatically selected point prompts that exclude overlapping neighbors, flowers and fruit. The result is 0.924 IoU, beating the non-learning baselines. Published at the 2025 ASABE Annual International Meeting (paper 2500347).",
     year: "2024–2025",
+    href: "https://doi.org/10.13031/aim.202500347",
   },
 ];

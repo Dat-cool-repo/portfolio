@@ -69,4 +69,18 @@ export const PROJECTS: Project[] = [
     tags: ["Kotlin", "Swift", "MediaPipe", "Android", "iOS", "Pose estimation"],
     year: "2026",
   },
+  {
+    title: "Dermatology Diagnosis",
+    blurb:
+      "Upload a photo of a skin lesion and get the three most likely diagnoses across seven lesion types, from benign keratosis and melanocytic nevi to melanoma and basal cell carcinoma. I built a CNN ensemble of ResNet-50, EfficientNet and YOLO, trained in PyTorch on 10K+ medical images with OpenCV preprocessing, which boosted top-1 accuracy by 12% and top-3 accuracy by 18%. The top-3 predictions are served through a FastAPI REST endpoint, containerized with Docker and deployed on AWS ECS at 99.9% uptime.",
+    tags: ["PyTorch", "OpenCV", "ResNet-50", "EfficientNet", "YOLO", "FastAPI", "Docker", "AWS"],
+    year: "2024",
+  },
+  {
+    title: "SET Robot",
+    blurb:
+      "A robot built with UF's SASE Engineering Team. I worked on the electrical side, wiring the robot's electronics: Arduino Uno and Nano controllers, motor drivers for the drive wheels, and the stepper motor and servos that move the arm. I also handled the lidar data processing. Distance and signal-strength frames from a TF-series lidar are read over serial, paired with the stepper's sweep angle, and converted from polar readings into x–y points the navigation code can use.",
+    tags: ["Arduino", "C++", "Python", "Lidar", "Electronics", "Robotics"],
+    year: "2023–2024",
+  },
 ];
