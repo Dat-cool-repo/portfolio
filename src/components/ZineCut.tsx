@@ -17,7 +17,9 @@ const CLIP_STYLES = [
   "bg-black text-[#ffe14d] font-display",
 ];
 
-const SPOTS = ["-right-4 -top-5 rotate-6", "-left-5 bottom-6 -rotate-6", "-right-6 bottom-1/3 rotate-3"];
+// Straddle the box's edges (top-right corner, bottom border) so they never
+// sit over the box's content.
+const SPOTS = ["-right-4 -top-5 rotate-6", "-left-4 -bottom-6 -rotate-6", "right-10 -bottom-7 rotate-3"];
 
 // Each ransom letter cut from a different "magazine".
 const LETTER_STYLES = [
