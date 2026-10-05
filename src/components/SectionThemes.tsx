@@ -73,7 +73,9 @@ export default function SectionThemes() {
     // purple impact negative, About turns the page into a punk photocopy.
     // One loop reads the real :hover state every frame (so scrolling under a
     // still mouse can't desync it), sets <html data-hold>, and cuts the
-    // overlay's hole around the hovered panel as it drifts. Mouse only:
+    // overlay's hole around the hovered panel. The hole is in page
+    // coordinates and the overlays span the whole page, so scrolling moves
+    // them with the box natively instead of trailing a frame behind. Mouse only:
     // touch devices have no real hover, and the full-screen overlays are too
     // heavy for phones, so the loop doesn't run there at all.
     const canHover = window.matchMedia("(hover: hover) and (pointer: fine)");
@@ -102,14 +104,17 @@ export default function SectionThemes() {
       // the rect actually moves: every change repaints the full-screen overlays.
       const pad = mode === "exp" ? 6 : 70;
       const r = box.getBoundingClientRect();
-      const rect = `${Math.round(r.left - pad)} ${Math.round(r.top - pad)} ${Math.round(r.right + pad)} ${Math.round(r.bottom + pad)}`;
+      const sx = window.scrollX;
+      const sy = window.scrollY;
+      const rect = `${Math.round(r.left + sx - pad)} ${Math.round(r.top + sy - pad)} ${Math.round(r.right + sx + pad)} ${Math.round(r.bottom + sy + pad)} ${document.body.offsetHeight}`;
       if (rect === lastRect) return;
       lastRect = rect;
-      const [x1, y1, x2, y2] = rect.split(" ");
+      const [x1, y1, x2, y2, docH] = rect.split(" ");
       html.style.setProperty("--hx1", `${x1}px`);
       html.style.setProperty("--hy1", `${y1}px`);
       html.style.setProperty("--hx2", `${x2}px`);
       html.style.setProperty("--hy2", `${y2}px`);
+      html.style.setProperty("--doc-h", `${docH}px`);
     };
     const stop = () => {
       cancelAnimationFrame(raf);
@@ -142,8 +147,10 @@ export default function SectionThemes() {
     <>
       {/* Held full-screen modes while a box is hovered (see loop above). */}
       <div aria-hidden className="hold-impact">
-        <span className="hold-impact-lines" />
-        <span className="hold-impact-dots" />
+        <span className="hold-pin">
+          <span className="hold-impact-lines" />
+          <span className="hold-impact-dots" />
+        </span>
       </div>
       <div aria-hidden className="hold-box">
         <span className="hold-box-bars" />
@@ -154,7 +161,9 @@ export default function SectionThemes() {
       <div aria-hidden className="hold-punk">
         <span className="hold-punk-gray" />
         <span className="hold-punk-ink" />
-        <span className="hold-punk-strips" />
+        <span className="hold-punk-strips">
+          <span className="hold-pin" />
+        </span>
       </div>
       <p
         key={scene.id}

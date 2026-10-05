@@ -1025,16 +1025,13 @@ html.impact-active .scene-bg {
    Everything outside the box (and its cut-outs) is desaturated, screened
    with red halftone and grain, and slashed with torn newsprint strips that
    jump on 4s. Shares the hole mechanism with the experience hold. ---- */
-/* Each layer is its own fixed element so its blend mode mixes with the page
-   (a shared parent would isolate the blending). */
-.hold-punk {
-  display: contents;
-}
+/* Each layer blends on its own, so its blend mode mixes with the page; the
+   parent isn't a stacking context, so it doesn't isolate them. It only clips
+   the jumping layers so they can't widen the page. */
 .hold-punk > span {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 80;
-  pointer-events: none;
   visibility: hidden;
   clip-path: polygon(
     evenodd,
@@ -1057,11 +1054,13 @@ html[data-hold="punk"]:not(.fx-off) .hold-punk > span {
   mix-blend-mode: multiply;
 }
 .hold-punk-strips {
+  mix-blend-mode: multiply;
+}
+.hold-punk-strips > .hold-pin {
   background:
     linear-gradient(-8deg, transparent 0 18%, #000 18% 22%, transparent 22% 100%),
     linear-gradient(6deg, transparent 0 70%, #e8112d 70% 76%, transparent 76% 100%),
     linear-gradient(-3deg, transparent 0 48%, #1d3fbb 48% 51%, transparent 51% 100%);
-  mix-blend-mode: multiply;
 }
 @keyframes hold-punk-jump {
   0%, 100% { transform: translate(0, 0); }
@@ -1070,7 +1069,7 @@ html[data-hold="punk"]:not(.fx-off) .hold-punk > span {
   75% { transform: translate(-6px, -4px) scale(1.02); }
 }
 @media (prefers-reduced-motion: no-preference) {
-  html[data-hold="punk"]:not(.fx-off) .hold-punk-strips {
+  html[data-hold="punk"]:not(.fx-off) .hold-punk-strips > .hold-pin {
     animation: hold-punk-jump 0.667s steps(1, end) infinite; /* on 4s */
   }
   html[data-hold="punk"]:not(.fx-off) .hold-punk-ink {
@@ -1174,11 +1173,34 @@ html[data-hold="punk"]:not(.fx-off) .hold-punk > span {
 
 /* ---- Experience: hovering a box holds the whole screen in the purple
    impact negative; the hovered box flips back to positive so it pops. ---- */
-.hold-impact {
-  position: fixed;
-  inset: 0;
-  z-index: 80;
+/* The hold overlays cover the whole page rather than the viewport: the hole
+   around the hovered box is in page coordinates (vars set by
+   SectionThemes.tsx), so it scrolls with the box natively. A fixed overlay
+   with a JS-moved hole trails the box by a frame while scrolling. They only
+   take page height while held, so they can't keep a shrunk page tall. */
+.hold-impact,
+.hold-punk {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  overflow: clip;
   pointer-events: none;
+}
+html[data-hold] :is(.hold-impact, .hold-punk) {
+  height: var(--doc-h, 100vh);
+}
+/* Viewport-sized layer inside a page-sized overlay, for effects centered on
+   the screen (speed lines, torn strips). */
+.hold-pin {
+  position: sticky;
+  top: 0;
+  display: block;
+  height: 100vh;
+}
+.hold-impact {
+  z-index: 80;
   visibility: hidden;
   background: #9a1fc4;
   mix-blend-mode: multiply;
@@ -1189,7 +1211,7 @@ html[data-hold="punk"]:not(.fx-off) .hold-punk > span {
     var(--hx1, 0) var(--hy1, 0), var(--hx2, 0) var(--hy1, 0), var(--hx2, 0) var(--hy2, 0), var(--hx1, 0) var(--hy2, 0), var(--hx1, 0) var(--hy1, 0)
   );
 }
-.hold-impact > span {
+.hold-impact .hold-pin > span {
   position: absolute;
   inset: 0;
 }
@@ -1210,6 +1232,17 @@ html[data-hold="exp"]:not(.fx-off):not(.impact-duotone) .hold-impact {
 html[data-hold="exp"]:not(.fx-off):not(.impact-duotone) :is(main, .scene-bg, body > div > header, footer) {
   filter: invert(1) grayscale(1) contrast(1.7);
 }
+/* The nav rides above the overlays while a box is held, so the hole and the
+   box texture never cut into it when it passes over the box. It takes the
+   purple as a filter instead, so it still matches the page around it. */
+html[data-hold="exp"]:not(.fx-off):not(.impact-duotone) body > div > header {
+  z-index: 85;
+  filter: invert(1) grayscale(1) contrast(1.7) url(#hold-tint);
+}
+html[data-hold="punk"]:not(.fx-off) body > div > header {
+  z-index: 85;
+  filter: grayscale(1) contrast(1.3);
+}
 /* The hovered box stays in the hard negative (black paper, white ink).
    Its shadow/outline colors are pre-inverted: final black drop, white rim. */
 html[data-hold="exp"]:not(.fx-off):not(.impact-duotone) .exp-box.is-held > .panel {
@@ -1226,10 +1259,12 @@ html[data-hold="exp"]:not(.fx-off):not(.impact-duotone) .exp-box.is-held > .pane
 
 /* Texture over the hovered box, outside the filtered page so it keeps its
    color: acid-green slash bars, corner halftone, edge shards, scanlines.
-   Screen-blended, so it lights up the black and leaves white ink white. */
+   Screen-blended, so it lights up the black and leaves white ink white.
+   Positioned on the page so it scrolls with the box, and stacked under the
+   nav and corner tags (z-40+) so it never washes over them. */
 .hold-box {
-  position: fixed;
-  z-index: 81;
+  position: absolute;
+  z-index: 30;
   left: var(--hx1, 0);
   top: var(--hy1, 0);
   width: calc(var(--hx2, 0) - var(--hx1, 0));
