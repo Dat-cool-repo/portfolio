@@ -35,7 +35,7 @@ const description =
 // The preview image itself comes from app/opengraph-image.tsx; metadataBase
 // turns its path into the absolute URL that link unfurlers require.
 export const metadata: Metadata = {
-  metadataBase: new URL("https://dat-dev.com"),
+  metadataBase: new URL("https://www.dat-dev.com"),
   title,
   description,
   alternates: { canonical: "/" },
