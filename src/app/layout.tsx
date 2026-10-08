@@ -28,10 +28,30 @@ const code = Space_Mono({
   variable: "--font-code",
 });
 
+const title = "Dat Le — Machine Learning Engineer";
+const description =
+  "Dat Le — UF student and ML engineer. Production ML pipelines, LLM agent infrastructure, and research in model diffing and computer vision.";
+
+// The preview image itself comes from app/opengraph-image.tsx; metadataBase
+// turns its path into the absolute URL that link unfurlers require.
 export const metadata: Metadata = {
-  title: "Dat Le — Machine Learning Engineer",
-  description:
-    "Dat Le — UF student and ML engineer. Production ML pipelines, LLM agent infrastructure, and research in model diffing and computer vision.",
+  metadataBase: new URL("https://dat-dev.com"),
+  title,
+  description,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "Dat Le",
+    title,
+    description,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
