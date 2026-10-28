@@ -28,7 +28,7 @@ export default function ComicPage({
   return (
     <section
       id={id}
-      className="mx-auto max-w-6xl scroll-mt-16 px-4 py-28 sm:px-10 sm:py-44"
+      className="mx-auto max-w-6xl px-4 py-28 sm:px-10 sm:py-44"
     >
       <Reveal>
         <div

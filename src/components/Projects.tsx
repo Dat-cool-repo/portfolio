@@ -30,7 +30,7 @@ export default function Projects() {
         ))}
 
         {/* Research files, drawn into the same sketchbook. */}
-        <div id="research" className="relative z-10 scroll-mt-24 pt-6">
+        <div id="research" className="relative z-10 scroll-mt-8 pt-6">
           <div className="title-panel">
             <span className="caption relative -rotate-2">Research files</span>
             <h3 className="font-display misprint relative mt-4 text-4xl uppercase leading-none tracking-wide text-foreground sm:text-5xl">

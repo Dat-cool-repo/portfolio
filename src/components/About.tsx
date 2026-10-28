@@ -146,9 +146,9 @@ export default function About() {
               className="panel h-full bg-accent-3 p-6 sm:p-8"
               style={{ "--shadow": "var(--accent-1)" } as React.CSSProperties}
             >
-              <p className="font-display text-3xl uppercase tracking-wide">
+              <h3 className="font-display text-3xl uppercase tracking-wide">
                 Power-ups
-              </p>
+              </h3>
               <div className="mt-4 space-y-5">
                 {SKILL_GROUPS.map((group) => (
                   <div key={group.label}>
@@ -188,9 +188,9 @@ export default function About() {
                 aria-hidden
                 className="speed-lines pointer-events-none absolute inset-0 opacity-60"
               />
-              <p className="font-display misprint relative text-3xl uppercase tracking-wide">
+              <h3 className="font-display misprint relative text-3xl uppercase tracking-wide">
                 Achievements unlocked
-              </p>
+              </h3>
               <ol className="relative mt-5 space-y-4">
                 {AWARDS.map((a) => (
                   <li key={a.title} className="flex gap-4">
@@ -225,9 +225,9 @@ export default function About() {
                 aria-hidden
                 className="halftone-fade pointer-events-none absolute inset-0"
               />
-              <p className="font-display relative text-3xl uppercase tracking-wide">
+              <h3 className="font-display relative text-3xl uppercase tracking-wide">
                 Side quests
-              </p>
+              </h3>
               <ul className="relative mt-5 space-y-4">
                 {SIDE_QUESTS.map((q) => (
                   <li

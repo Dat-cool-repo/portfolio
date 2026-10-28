@@ -115,7 +115,7 @@ export default function ProjectCard({
                 href={project.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="after:absolute after:inset-0 focus-visible:outline-none"
+                className="after:absolute after:inset-0"
               >
                 {project.title}
               </a>

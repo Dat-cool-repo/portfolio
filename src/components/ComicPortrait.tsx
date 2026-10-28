@@ -32,7 +32,9 @@ export default function ComicPortrait() {
               src={PORTRAIT_SRC}
               alt="Portrait of Dat"
               fill
-              priority
+              // Not `preload`: the portrait is hidden below lg, so phones
+              // should skip the download entirely (lazy + display:none).
+              fetchPriority="high"
               sizes="300px"
               className="portrait-photo object-cover"
             />

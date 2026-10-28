@@ -1,7 +1,6 @@
 "use client";
 
-import { MotionConfig, motion } from "framer-motion";
-import type { ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 export default function Reveal({
   children,
@@ -14,19 +13,35 @@ export default function Reveal({
   y?: number;
   className?: string;
 }) {
-  // reducedMotion="user" drops the slide for users who ask for less motion,
-  // without rendering different markup on server and client.
+  const ref = useRef<HTMLDivElement>(null);
+  const [shown, setShown] = useState(false);
+
+  // Fade up once, when the block comes 80px inside the viewport. The motion
+  // itself is CSS (.reveal in globals.css), which drops the slide for users
+  // who ask for less motion, so no animation library ships for this.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setShown(true);
+        io.disconnect();
+      },
+      { rootMargin: "-80px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <MotionConfig reducedMotion="user">
-      <motion.div
-        initial={{ opacity: 0, y }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
-        className={className}
-      >
-        {children}
-      </motion.div>
-    </MotionConfig>
+    <div
+      ref={ref}
+      data-shown={shown || undefined}
+      className={className ? `reveal ${className}` : "reveal"}
+      style={{ "--reveal-y": `${y}px`, "--reveal-delay": `${delay}s` } as React.CSSProperties}
+    >
+      {children}
+    </div>
   );
 }

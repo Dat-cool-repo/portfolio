@@ -9,11 +9,24 @@ export default function CustomCursor() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
-    if (!mq.matches) return;
+    // Same width as the md:block below: no custom cursor is drawn in narrower
+    // windows, so the system cursor must stay there.
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 768px)");
+    const html = document.documentElement;
 
     const pos = { x: 0, y: 0 };
     const ring = { x: 0, y: 0 };
+    let raf = 0;
+
+    // The ring eases after the dot; the loop sleeps once it has caught up.
+    const tick = () => {
+      ring.x += (pos.x - ring.x) * 0.18;
+      ring.y += (pos.y - ring.y) * 0.18;
+      if (ringRef.current) {
+        ringRef.current.style.transform = `translate3d(${ring.x}px, ${ring.y}px, 0)`;
+      }
+      raf = Math.abs(pos.x - ring.x) + Math.abs(pos.y - ring.y) > 0.1 ? requestAnimationFrame(tick) : 0;
+    };
 
     const onMove = (e: MouseEvent) => {
       pos.x = e.clientX;
@@ -24,23 +37,33 @@ export default function CustomCursor() {
       }
       const target = e.target as HTMLElement;
       setHovering(!!target.closest("a, button, [data-cursor-hover]"));
+      if (!raf) raf = requestAnimationFrame(tick);
     };
 
-    let raf = 0;
-    const tick = () => {
-      ring.x += (pos.x - ring.x) * 0.18;
-      ring.y += (pos.y - ring.y) * 0.18;
-      if (ringRef.current) {
-        ringRef.current.style.transform = `translate3d(${ring.x}px, ${ring.y}px, 0)`;
-      }
-      raf = requestAnimationFrame(tick);
+    // Leaving the window: hide instead of freezing at the edge.
+    const onOut = (e: MouseEvent) => {
+      if (!e.relatedTarget) setVisible(false);
     };
-    raf = requestAnimationFrame(tick);
 
-    window.addEventListener("mousemove", onMove);
-    return () => {
+    const start = () => {
+      html.dataset.customCursor = "";
+      window.addEventListener("mousemove", onMove, { passive: true });
+      document.addEventListener("mouseout", onOut);
+    };
+    const stop = () => {
+      delete html.dataset.customCursor;
       window.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseout", onOut);
       cancelAnimationFrame(raf);
+      raf = 0;
+      setVisible(false);
+    };
+    const sync = () => (mq.matches ? start() : stop());
+    sync();
+    mq.addEventListener("change", sync);
+    return () => {
+      mq.removeEventListener("change", sync);
+      stop();
     };
   }, []);
 

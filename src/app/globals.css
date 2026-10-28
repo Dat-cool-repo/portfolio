@@ -41,6 +41,14 @@
 
 html {
   scroll-behavior: smooth;
+  /* Keeps anchor jumps and keyboard focus clear of the fixed nav bar. */
+  scroll-padding-top: 4rem;
+}
+
+/* No double-tap zoom delay on taps; pinch zoom still works. */
+a,
+button {
+  touch-action: manipulation;
 }
 
 body {
@@ -1615,9 +1623,40 @@ html.impact-active .boil > * {
   }
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .cursor-none-desktop {
-    cursor: none;
+/* Only hide the system cursor once the custom one is running (CustomCursor.tsx
+   sets the attribute), so there is always a cursor before hydration and in
+   narrow desktop windows, where the custom one isn't drawn. */
+html[data-custom-cursor] .cursor-none-desktop {
+  cursor: none;
+}
+
+/* Skip link (layout.tsx): parked above the viewport until focused. */
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 120;
+  translate: 0 calc(-100% - 2rem);
+}
+.skip-link:focus {
+  translate: none;
+}
+
+/* ---- Scroll reveal (see Reveal.tsx) ---- */
+.reveal {
+  opacity: 0;
+  translate: 0 var(--reveal-y, 24px);
+  transition:
+    opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s),
+    translate 0.5s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s);
+}
+.reveal[data-shown] {
+  opacity: 1;
+  translate: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    translate: none;
   }
 }
 

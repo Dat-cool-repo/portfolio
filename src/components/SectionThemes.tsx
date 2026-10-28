@@ -78,13 +78,18 @@ export default function SectionThemes() {
     // them with the box natively instead of trailing a frame behind. Mouse only:
     // touch devices have no real hover, and the full-screen overlays are too
     // heavy for phones, so the loop doesn't run there at all.
+    // The loop sleeps while nothing is held and nothing has moved for a beat;
+    // pointer movement and scrolling wake it, and the grace period covers the
+    // browser updating :hover a little after the last scroll event.
     const canHover = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const AWAKE_MS = 400;
     let held: HTMLElement | null = null;
     let lastRect = "";
     let raf = 0;
+    let awakeUntil = 0;
     const loop = () => {
-      raf = requestAnimationFrame(loop);
       const box = document.querySelector<HTMLElement>(".exp-box:hover, .punk-box:hover");
+      raf = box || performance.now() < awakeUntil ? requestAnimationFrame(loop) : 0;
       if (box !== held) {
         held?.classList.remove("is-held");
         box?.classList.add("is-held");
@@ -116,9 +121,15 @@ export default function SectionThemes() {
       html.style.setProperty("--hy2", `${y2}px`);
       html.style.setProperty("--doc-h", `${docH}px`);
     };
+    const wake = () => {
+      awakeUntil = performance.now() + AWAKE_MS;
+      if (!raf) loop();
+    };
     const stop = () => {
       cancelAnimationFrame(raf);
       raf = 0;
+      window.removeEventListener("pointermove", wake);
+      window.removeEventListener("scroll", wake);
       held?.classList.remove("is-held");
       held = null;
       lastRect = "";
@@ -126,8 +137,10 @@ export default function SectionThemes() {
     };
     // Follow the pointer type, e.g. a mouse plugged into a tablet.
     const syncLoop = () => {
-      if (!canHover.matches) stop();
-      else if (!raf) loop();
+      if (!canHover.matches) return stop();
+      window.addEventListener("pointermove", wake, { passive: true });
+      window.addEventListener("scroll", wake, { passive: true });
+      wake();
     };
     syncLoop();
     canHover.addEventListener("change", syncLoop);
@@ -165,9 +178,11 @@ export default function SectionThemes() {
           <span className="hold-pin" />
         </span>
       </div>
+      {/* Flavor text that changes on every scroll: kept out of the
+          accessibility tree so screen readers aren't interrupted. */}
       <p
         key={scene.id}
-        aria-live="polite"
+        aria-hidden
         className="dimension-tag pop-in fixed bottom-6 left-6 z-40 hidden border-[3px] border-black bg-paper px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-paper-ink shadow-[4px_4px_0_0_var(--accent-1)] sm:block"
       >
         <span className="mr-2 inline-block h-2 w-2 rounded-full bg-accent-1 align-middle" />

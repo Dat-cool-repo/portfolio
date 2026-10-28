@@ -70,7 +70,7 @@ export default function Experience() {
                               <span className="block font-display text-2xl leading-none sm:text-4xl text-paper-ink">
                                 {stat.value}
                               </span>
-                              <span className="mt-1 block font-mono text-[9px] font-bold sm:text-[11px] uppercase leading-snug tracking-wide text-paper-ink">
+                              <span aria-hidden className="mt-1 block font-mono text-[9px] font-bold sm:text-[11px] uppercase leading-snug tracking-wide text-paper-ink">
                                 {stat.label}
                               </span>
                             </dd>
